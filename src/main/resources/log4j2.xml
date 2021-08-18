@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="org.apache.logging.log4j.core">
+    <Appenders>
+        <TerminalConsole name="Console">
+            <PatternLayout
+                    pattern="%blue{%d{HH:mm:ss}} [%style{%highlight{%level}{INFO=bright green, WARN=bright yellow,
+                    ERROR=bright red, DEBUG=bright green}}] %minecraftFormatting{%msg}%n"/>
+        </TerminalConsole>
+
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

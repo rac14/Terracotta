@@ -1,8 +1,13 @@
 package org.terracottamc.entity.player;
 
 import org.terracottamc.entity.EntityHuman;
+import org.terracottamc.network.packet.ChunkRadiusUpdatedPacket;
 import org.terracottamc.network.packet.DisconnectPacket;
+import org.terracottamc.network.packet.PlayStatusPacket;
+import org.terracottamc.network.packet.type.PlayStatus;
 import org.terracottamc.server.Server;
+
+import java.net.InetSocketAddress;
 
 /**
  * Copyright (c) 2021, TerracottaMC
@@ -24,6 +29,8 @@ public class Player extends EntityHuman {
     private final String xboxId;
 
     private GameMode gameMode;
+    private boolean spawned;
+    private int viewDistance;
 
     /**
      * Creates a new {@link org.terracottamc.entity.player.Player} with given {@link org.terracottamc.server.Server}
@@ -40,6 +47,7 @@ public class Player extends EntityHuman {
         this.xboxId = this.loginChainData.getXboxId();
         this.playerNetworkConnection = playerNetworkConnection;
         this.server = this.playerNetworkConnection.getServer();
+        this.viewDistance = this.server.getServerConfigurationData().getViewDistance();
     }
 
     /**
@@ -101,6 +109,63 @@ public class Player extends EntityHuman {
     }
 
     /**
+     * Proofs whether this {@link org.terracottamc.entity.player.Player}
+     * is spawned on the {@link org.terracottamc.server.Server}
+     *
+     * @return whether this {@link org.terracottamc.entity.player.Player} is spawned
+     */
+    public boolean isSpawned() {
+        return this.spawned;
+    }
+
+    /**
+     * Retrieves the view distance in chunks of this {@link org.terracottamc.entity.player.Player}
+     *
+     * @return a fresh view distance
+     */
+    public int getViewDistance() {
+        return this.viewDistance;
+    }
+
+    /**
+     * Updates the view distance of this {@link org.terracottamc.entity.player.Player}
+     * by sending the {@link org.terracottamc.network.packet.ChunkRadiusUpdatedPacket}
+     *
+     * @param viewDistance which represents the updated value
+     */
+    public void setViewDistance(final int viewDistance) {
+        final ChunkRadiusUpdatedPacket chunkRadiusUpdatedPacket = new ChunkRadiusUpdatedPacket();
+        chunkRadiusUpdatedPacket.setUpdatedChunkRadius(viewDistance);
+
+        this.playerNetworkConnection.sendPacket(chunkRadiusUpdatedPacket);
+
+        this.viewDistance = viewDistance;
+    }
+
+    /**
+     * Sends the given {@link org.terracottamc.network.packet.type.PlayStatus}
+     * to this {@link org.terracottamc.entity.player.Player}
+     *
+     * @param playStatus which is used to build the {@link org.terracottamc.network.packet.PlayStatusPacket}
+     *                   that should be sent
+     */
+    public void sendPlayStatus(final PlayStatus playStatus) {
+        final PlayStatusPacket playStatusPacket = new PlayStatusPacket();
+        playStatusPacket.setPlayStatus(playStatus);
+
+        this.playerNetworkConnection.sendPacket(playStatusPacket);
+    }
+
+    /**
+     * Initializes this {@link org.terracottamc.entity.player.Player} after the loading screen has been passed
+     */
+    public void initialize() {
+        this.sendPlayStatus(PlayStatus.PLAYER_SPAWN);
+
+        this.spawned = true;
+    }
+
+    /**
      * Disconnects this {@link org.terracottamc.entity.player.Player} from its {@link org.terracottamc.server.Server}
      * without hiding the disconnection screen
      *
@@ -123,8 +188,16 @@ public class Player extends EntityHuman {
 
         this.playerNetworkConnection.sendPacket(disconnectPacket);
 
-        Server.getInstance().getLogger().info(this.name + " disconnected with reason: " + disconnectMessage);
+        Server.getInstance().getLogger().info("The player " + this.name + " disconnected with reason: " +
+                disconnectMessage);
 
-        this.server.getPlayers().remove(this);
+        this.server.removePlayerByAddress((InetSocketAddress) this.getPlayerNetworkConnection().getRakNetSession()
+                .remoteAddress());
+
+        try {
+            this.playerNetworkConnection.getRakNetSession().close().sync();
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

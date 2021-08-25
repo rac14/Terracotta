@@ -31,6 +31,19 @@ public class Vector {
     }
 
     /**
+     * Creates a new {@link org.terracottamc.math.Vector} specified for blocks
+     *
+     * @param x which represents the value on the x-axis
+     * @param y which represents the value on the y-axis
+     * @param z which represents the value on the z-axis
+     */
+    public Vector(final int x, final int y, final int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    /**
      * Retrieves the upper {@link org.terracottamc.math.Vector}
      *
      * @return a fresh {@link org.terracottamc.math.Vector}
@@ -226,6 +239,33 @@ public class Vector {
     }
 
     /**
+     * Retrieves the x value of this {@link org.terracottamc.math.Vector} specified for blocks
+     *
+     * @return a fresh float value
+     */
+    public int getBlockX() {
+        return (int) this.x;
+    }
+
+    /**
+     * Retrieves the y value of this {@link org.terracottamc.math.Vector} specified for blocks
+     *
+     * @return a fresh float value
+     */
+    public int getBlockY() {
+        return (int) this.y;
+    }
+
+    /**
+     * Retrieves the z value of this {@link org.terracottamc.math.Vector} specified for blocks
+     *
+     * @return a fresh float value
+     */
+    public int getBlockZ() {
+        return (int) this.z;
+    }
+
+    /**
      * Updates the x value of this {@link org.terracottamc.math.Vector}
      *
      * @param x that represents the updated value
@@ -250,5 +290,32 @@ public class Vector {
      */
     public void setZ(final float z) {
         this.z = z;
+    }
+
+    /**
+     * Updates the x value of this {@link org.terracottamc.math.Vector} specified for blocks
+     *
+     * @param blockX that represents the updated value
+     */
+    public void setBlockX(final int blockX) {
+        this.x = blockX;
+    }
+
+    /**
+     * Updates the y value of this {@link org.terracottamc.math.Vector} specified for blocks
+     *
+     * @param blockY that represents the updated value
+     */
+    public void setBlockY(final int blockY) {
+        this.y = blockY;
+    }
+
+    /**
+     * Updates the z value of this {@link org.terracottamc.math.Vector} specified for blocks
+     *
+     * @param blockZ that represents the updated value
+     */
+    public void setBlockZ(final int blockZ) {
+        this.z = blockZ;
     }
 }

@@ -19,13 +19,13 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.unix.UnixChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 import network.ycc.raknet.RakNet;
 import network.ycc.raknet.pipeline.UserDataCodec;
 import network.ycc.raknet.server.channel.RakNetServerChannel;
 import org.terracottamc.network.packet.Protocol;
 import org.terracottamc.network.raknet.compression.PacketCompressor;
 import org.terracottamc.network.raknet.compression.PacketDecompressor;
+import org.terracottamc.network.raknet.handler.ConnectionTimeoutHandler;
 import org.terracottamc.network.raknet.handler.UnconnectedPingHandler;
 import org.terracottamc.network.raknet.protocol.ProtocolDecoder;
 import org.terracottamc.network.raknet.protocol.ProtocolEncoder;
@@ -100,8 +100,8 @@ public class RakNetListener {
                             final RakNet.Config rakNetConfig = (RakNet.Config) channelConfig;
                             rakNetConfig.setMaxQueuedBytes(8 * 1024 * 1024);
 
-                            channel.pipeline().addFirst("timeout", new ReadTimeoutHandler(5000L,
-                                    TimeUnit.MILLISECONDS));
+                            channel.pipeline().addFirst(ConnectionTimeoutHandler.NAME,
+                                    new ConnectionTimeoutHandler(15, TimeUnit.SECONDS));
                             channel.pipeline().addLast(UserDataCodec.NAME, new UserDataCodec(Protocol.BATCH_PACKET));
                             channel.pipeline().addLast(PacketCompressor.NAME, new PacketCompressor());
                             channel.pipeline().addLast(PacketDecompressor.NAME, new PacketDecompressor());

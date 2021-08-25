@@ -23,6 +23,12 @@ public class LoginChainData {
     private final UUID uuid;
     private final String languageCode;
     private final String gameVersion;
+    private final String platformOfflineId;
+    private final String platformOnlineId;
+    private final String selfSignedId;
+    private final String serverAddress;
+    private final String thirdPartyName;
+    private final boolean thirdPartyNameOnly;
     private final DeviceInfo deviceInfo;
 
     /**
@@ -37,7 +43,9 @@ public class LoginChainData {
      * @param deviceInfo      that is the information about the players device
      */
     public LoginChainData(final int protocolVersion, final String username, final String xboxId, final UUID uuid,
-                          final String languageCode, final String gameVersion, final DeviceInfo deviceInfo) {
+                          final String languageCode, final String gameVersion, final String platformOfflineId,
+                          final String platformOnlineId, final String selfSignedId, final String serverAddress,
+                          final String thirdPartyName, final boolean thirdPartyNameOnly, final DeviceInfo deviceInfo) {
         this.protocolVersion = protocolVersion;
         this.username = username;
         this.xboxId = xboxId;
@@ -45,6 +53,12 @@ public class LoginChainData {
         this.languageCode = languageCode;
         this.gameVersion = gameVersion;
         this.deviceInfo = deviceInfo;
+        this.platformOfflineId = platformOfflineId;
+        this.platformOnlineId = platformOnlineId;
+        this.selfSignedId = selfSignedId;
+        this.serverAddress = serverAddress;
+        this.thirdPartyName = thirdPartyName;
+        this.thirdPartyNameOnly = thirdPartyNameOnly;
     }
 
     /**
@@ -99,6 +113,60 @@ public class LoginChainData {
      */
     public String getGameVersion() {
         return this.gameVersion;
+    }
+
+    /**
+     * Returns the platform offline id of the {@link org.terracottamc.entity.player.Player}
+     *
+     * @return a fresh {@link java.lang.String}
+     */
+    public String getPlatformOfflineId() {
+        return this.platformOfflineId;
+    }
+
+    /**
+     * Returns the platform online id of the {@link org.terracottamc.entity.player.Player}
+     *
+     * @return a fresh {@link java.lang.String}
+     */
+    public String getPlatformOnlineId() {
+        return this.platformOnlineId;
+    }
+
+    /**
+     * Returns the self signed id of the {@link org.terracottamc.entity.player.Player}
+     *
+     * @return a fresh {@link java.lang.String}
+     */
+    public String getSelfSignedId() {
+        return this.selfSignedId;
+    }
+
+    /**
+     * Returns the server address of the {@link org.terracottamc.entity.player.Player}
+     *
+     * @return a fresh {@link java.lang.String}
+     */
+    public String getServerAddress() {
+        return this.serverAddress;
+    }
+
+    /**
+     * Retrieves the third party name of the {@link org.terracottamc.entity.player.Player}
+     *
+     * @return a fresh {@link java.lang.String}
+     */
+    public String getThirdPartyName() {
+        return this.thirdPartyName;
+    }
+
+    /**
+     * Proofs whether third party name only takes place
+     *
+     * @return true, when third party name only takes place, otherwise false
+     */
+    public boolean isThirdPartyNameOnly() {
+        return this.thirdPartyNameOnly;
     }
 
     /**

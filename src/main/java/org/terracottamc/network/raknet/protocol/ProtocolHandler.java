@@ -2,6 +2,7 @@ package org.terracottamc.network.raknet.protocol;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.terracottamc.entity.player.Player;
 import org.terracottamc.network.packet.LoginPacket;
@@ -29,14 +30,22 @@ public class ProtocolHandler extends SimpleChannelInboundHandler<Packet> {
 
     private final Server server;
 
+    private static ChannelPipeline channelPipeline;
+
     public ProtocolHandler() {
         this.server = Server.getInstance();
     }
 
     @Override
+    public void channelRegistered(final ChannelHandlerContext ctx) throws Exception {
+        super.channelRegistered(ctx);
+
+        ProtocolHandler.channelPipeline = ctx.pipeline();
+    }
+
+    @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Packet packet) {
         final Channel channel = ctx.channel();
-        final InetSocketAddress clientAddress = (InetSocketAddress) channel.remoteAddress();
 
         if (packet.getClass().equals(LoginPacket.class)) {
             final LoginPacket loginPacket = (LoginPacket) packet;
@@ -55,16 +64,20 @@ public class ProtocolHandler extends SimpleChannelInboundHandler<Packet> {
             return;
         }
 
-        for (final Player player : this.server.getPlayers()) {
-            final InetSocketAddress playerClientAddress = (InetSocketAddress) player.getPlayerNetworkConnection()
-                    .getRakNetSession().remoteAddress();
+        final Player player = this.server.getPlayerByAddress((InetSocketAddress) channel.remoteAddress());
 
-            if (playerClientAddress.getHostName().equalsIgnoreCase(clientAddress.getHostName()) &&
-                    playerClientAddress.getPort() == clientAddress.getPort()) {
-                packetHandler.handle(packet, player);
-
-                break;
-            }
+        if (player != null) {
+            packetHandler.handle(packet, player);
         }
+    }
+
+    /**
+     * Obtains the {@link io.netty.channel.ChannelPipeline}
+     * of this {@link org.terracottamc.network.raknet.protocol.ProtocolHandler}
+     *
+     * @return a fresh {@link io.netty.channel.ChannelPipeline}
+     */
+    public static ChannelPipeline getChannelPipeline() {
+        return ProtocolHandler.channelPipeline;
     }
 }

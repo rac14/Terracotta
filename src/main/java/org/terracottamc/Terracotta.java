@@ -17,9 +17,14 @@ import org.terracottamc.util.FileManagementUtil;
 public class Terracotta {
 
     public static void main(final String[] args) {
-        FileManagementUtil.createNecessaryFiles();
+        final Thread mainThread = new Thread(() -> {
+            FileManagementUtil.createNecessaryFiles();
 
-        final Server server = new Server();
-        server.start();
+            final Server server = new Server();
+            server.start();
+        });
+
+        mainThread.setName("Terracotta Server-Thread");
+        mainThread.start();
     }
 }

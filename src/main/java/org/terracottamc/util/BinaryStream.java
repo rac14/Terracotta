@@ -2,9 +2,15 @@ package org.terracottamc.util;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.terracottamc.entity.metadata.EntityMetadataFlag;
+import org.terracottamc.entity.metadata.EntityMetadataValue;
+import org.terracottamc.math.Vector;
+import org.terracottamc.world.gamerule.GameRule;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -288,6 +294,97 @@ public class BinaryStream {
         }
 
         this.writeByte((byte) ((int) value & 0x7F));
+    }
+
+    public Vector readVector() {
+        final float x = this.readFloatLE();
+        final float y = this.readFloatLE();
+        final float z = this.readFloatLE();
+
+        return new Vector(x, y, z);
+    }
+
+    public void writeVector(final Vector vector) {
+        this.writeFloatLE(vector.getX());
+        this.writeFloatLE(vector.getY());
+        this.writeFloatLE(vector.getZ());
+    }
+
+    public Vector readBlockVector() {
+        final int x = this.readVarInt();
+        final int y = this.readUnsignedVarInt();
+        final int z = this.readVarInt();
+
+        return new Vector(x, y, z);
+    }
+
+    public void writeBlockVector(final Vector vector) {
+        this.writeVarInt(vector.getBlockX());
+        this.writeUnsignedVarInt(vector.getBlockY());
+        this.writeVarInt(vector.getBlockZ());
+    }
+
+    public void writeGameRules(final List<GameRule<?>> gameRules) {
+        this.writeUnsignedVarInt(gameRules.size());
+
+        for (final GameRule<?> gameRule : gameRules) {
+            this.writeString(gameRule.getGameRuleType().name().toLowerCase().replaceAll("_", ""));
+            this.writeBoolean(true);
+
+            int type = 1;
+
+            if (gameRule.getDefaultValue().getClass().equals(Integer.class)) {
+                type = 2;
+            } else if (gameRule.getDefaultValue().getClass().equals(Float.class)) {
+                type = 3;
+            }
+
+            this.writeUnsignedVarInt(type);
+
+            switch (type) {
+                case 1:
+                    this.writeBoolean((Boolean) gameRule.getDefaultValue());
+                    break;
+                case 2:
+                    this.writeUnsignedVarInt((Integer) gameRule.getDefaultValue());
+                    break;
+                case 3:
+                    this.writeFloatLE((Float) gameRule.getDefaultValue());
+                    break;
+            }
+        }
+    }
+
+    public void writeEntityMetaData(final Map<EntityMetadataFlag, EntityMetadataValue<?>> metadataValues) {
+        this.writeUnsignedVarInt(metadataValues.size());
+
+        for (final Map.Entry<EntityMetadataFlag, EntityMetadataValue<?>> metadataEntry : metadataValues.entrySet()) {
+            final EntityMetadataFlag entityMetadataFlag = metadataEntry.getKey();
+            final EntityMetadataValue<?> entityMetadataValue = metadataEntry.getValue();
+
+            this.writeUnsignedVarInt(entityMetadataFlag.ordinal());
+            this.writeUnsignedVarInt(entityMetadataValue.getEntityMetadataFlagType().ordinal());
+
+            switch (entityMetadataValue.getEntityMetadataFlagType()) {
+                case BYTE:
+                    this.writeByte((byte) entityMetadataValue.getValue());
+                    break;
+                case SHORT:
+                    this.writeShortLE((short) entityMetadataValue.getValue());
+                    break;
+                case FLOAT:
+                    this.writeFloatLE((float) entityMetadataValue.getValue());
+                    break;
+                case STRING:
+                    this.writeString((String) entityMetadataValue.getValue());
+                    break;
+                case LONG:
+                    this.writeVarLong((long) entityMetadataValue.getValue());
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void writeVarBigInteger(BigInteger value) {

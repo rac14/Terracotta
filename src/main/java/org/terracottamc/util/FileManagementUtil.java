@@ -45,6 +45,7 @@ public class FileManagementUtil {
                     serverConfigurationData.setSubmotd("developed by Kaooot");
                     serverConfigurationData.setDefaultGameMode("Creative");
                     serverConfigurationData.setForceResourcePacks(false);
+                    serverConfigurationData.setViewDistance(8);
 
                     fileWriter.write(gson.toJson(serverConfigurationData));
 

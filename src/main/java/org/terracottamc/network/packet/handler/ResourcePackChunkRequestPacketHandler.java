@@ -4,7 +4,6 @@ import org.terracottamc.entity.player.Player;
 import org.terracottamc.network.packet.ResourcePackChunkDataPacket;
 import org.terracottamc.network.packet.ResourcePackChunkRequestPacket;
 import org.terracottamc.resourcepack.ResourcePack;
-import org.terracottamc.server.Server;
 
 /**
  * Copyright (c) 2021, TerracottaMC
@@ -21,7 +20,7 @@ public class ResourcePackChunkRequestPacketHandler implements IPacketHandler<Res
 
     @Override
     public void handle(final ResourcePackChunkRequestPacket packet, final Player player) {
-        final ResourcePack resourcePack = Server.getInstance().getResourcePackManager()
+        final ResourcePack resourcePack = player.getServer().getResourcePackManager()
                 .retrieveResourcePackById(packet.getResourcePackUuid());
 
         if (resourcePack != null) {

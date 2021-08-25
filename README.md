@@ -8,11 +8,12 @@
 </div>
 <hr/>
 
-# Terracotta
+# What is TerracottaMC?
+
+TerracottaMC is software for hosting Minecraft Bedrock Edition servers. From controlling everything you can possibly do on MCBE to everything players can ever imagine on a server, TerracottaMC also has an API which lets developer extend it. Let's face it plain MCBE Server's isn't fun That's mainly why we have an API. TerracottaMC has Clean feels and Stable Features / Performance optimization.
 
 
-A fresh Minecraft Bedrock Edition server software
-currently in heavy indev
+**Note:** There are still bugs left with latest 1.17.0 update. Please report bugs on the issue section.
 
 
 # Links
@@ -30,5 +31,8 @@ Discord: `https://discord.gg/PfnCznyGSR`
 - Is it Free ?
 > Yes
 
-- Can i use plugins in Terracotta ?
+- Can i use plugins in TerracottaMC ?
 > Yes
+
+- You have a question that's not answered
+> Ask here https://discord.gg/PfnCznyGSR

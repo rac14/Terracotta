@@ -31,8 +31,7 @@ public class ResourcePackStackPacket extends Packet {
 
         this.writeBoolean(this.mustAccept);
 
-        // behavior packs
-        this.writeUnsignedVarInt(0);
+        this.writeUnsignedVarInt(0); // behavior packs
 
         final Collection<ResourcePack> resourcePacks = Server.getInstance().getResourcePackManager().retrieveResourcePacks();
 
@@ -45,12 +44,8 @@ public class ResourcePackStackPacket extends Packet {
         }
 
         this.writeString(Protocol.MINECRAFT_VERSION);
-
-        // length of experimental data
-        this.writeInt(0);
-
-        // experiments previously toggled
-        this.writeBoolean(false);
+        this.writeInt(0); // length of experimental data
+        this.writeBoolean(false); // experiments previously toggled
     }
 
     /**

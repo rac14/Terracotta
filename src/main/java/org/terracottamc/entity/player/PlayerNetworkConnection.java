@@ -1,9 +1,10 @@
 package org.terracottamc.entity.player;
 
 import io.netty.channel.Channel;
-import org.terracottamc.network.packet.DisconnectPacket;
 import org.terracottamc.network.packet.Packet;
 import org.terracottamc.server.Server;
+
+import java.net.InetSocketAddress;
 
 /**
  * Copyright (c) 2021, TerracottaMC
@@ -54,17 +55,32 @@ public class PlayerNetworkConnection {
 
     /**
      * Sends a new {@link org.terracottamc.network.packet.Packet} to the client
-     * of the {@link org.terracottamc.entity.player.Player}
+     * of the {@link org.terracottamc.entity.player.Player} without flushing the data too
      *
      * @param packet the {@link org.terracottamc.network.packet.Packet} which should be sent
      */
     public void sendPacket(final Packet packet) {
-        packet.serialize();
+        this.sendPacket(packet, false);
+    }
 
-        if (packet.getClass().equals(DisconnectPacket.class)) {
-            this.rakNetSession.writeAndFlush(packet.getBuffer());
+    /**
+     * Sends a new {@link org.terracottamc.network.packet.Packet} to the client
+     * of the {@link org.terracottamc.entity.player.Player}
+     *
+     * @param packet     the {@link org.terracottamc.network.packet.Packet} which should be sent
+     * @param sendDirect whether the data should be flushed too
+     */
+    public void sendPacket(final Packet packet, final boolean sendDirect) {
+        final Player player = this.server.getPlayerByAddress((InetSocketAddress) this.rakNetSession.remoteAddress());
+
+        if (player != null) {
+            packet.setProtocolVersion(player.getLoginChainData().getProtocolVersion());
+        }
+
+        if (sendDirect) {
+            this.rakNetSession.writeAndFlush(packet);
         } else {
-            this.rakNetSession.write(packet.getBuffer());
+            this.rakNetSession.write(packet);
         }
     }
 }

@@ -15,6 +15,8 @@ import org.terracottamc.util.BinaryStream;
  */
 public abstract class Packet extends BinaryStream {
 
+    protected int protocolVersion;
+
     /**
      * Defines the identifier of this {@link org.terracottamc.network.packet.Packet}
      *
@@ -34,5 +36,14 @@ public abstract class Packet extends BinaryStream {
      */
     public void serialize() {
         this.writeUnsignedVarInt(this.getPacketId());
+    }
+
+    /**
+     * Sets the protocol version to work with of this {@link org.terracottamc.network.packet.Packet}
+     *
+     * @param protocolVersion which should be set to this {@link org.terracottamc.network.packet.Packet}
+     */
+    public void setProtocolVersion(final int protocolVersion) {
+        this.protocolVersion = protocolVersion;
     }
 }

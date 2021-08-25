@@ -1,13 +1,24 @@
 package org.terracottamc.network.packet.handler;
 
+import org.terracottamc.entity.player.GameMode;
 import org.terracottamc.entity.player.Player;
+import org.terracottamc.math.Vector;
+import org.terracottamc.network.packet.AvailableEntityIdentifiersPacket;
+import org.terracottamc.network.packet.BiomeDefinitionListPacket;
+import org.terracottamc.network.packet.CreativeContentPacket;
 import org.terracottamc.network.packet.ResourcePackClientResponsePacket;
 import org.terracottamc.network.packet.ResourcePackDataInfoPacket;
 import org.terracottamc.network.packet.ResourcePackStackPacket;
+import org.terracottamc.network.packet.StartGamePacket;
+import org.terracottamc.network.packet.type.GamePublishSetting;
 import org.terracottamc.network.packet.type.ResourcePackEntry;
 import org.terracottamc.network.packet.type.ResourcePackResponseStatus;
 import org.terracottamc.resourcepack.ResourcePack;
-import org.terracottamc.server.Server;
+import org.terracottamc.util.BedrockResourceDataReader;
+import org.terracottamc.world.Difficulty;
+import org.terracottamc.world.Dimension;
+import org.terracottamc.world.gamerule.GameRuleRegistry;
+import org.terracottamc.world.generator.GeneratorType;
 
 /**
  * Copyright (c) 2021, TerracottaMC
@@ -51,6 +62,83 @@ public class ResourcePackClientResponsePacketHandler implements IPacketHandler<R
                 this.sendResourcePackStack(player);
                 break;
             case COMPLETED:
+                final StartGamePacket startGamePacket = new StartGamePacket();
+                startGamePacket.setEntityUniqueId(player.getEntityId());
+                startGamePacket.setEntityId(player.getEntityId());
+                startGamePacket.setGameMode(GameMode.SURVIVAL); // TODO
+                startGamePacket.setVector(new Vector(0f, 6f, 0f)); // TODO
+                startGamePacket.setYaw(0f);
+                startGamePacket.setPitch(0f);
+                startGamePacket.setWorldSeed(0);
+                startGamePacket.setSpawnBiomeType(0);
+                startGamePacket.setUserDefinedBiomeName("plains");
+                startGamePacket.setDimension(Dimension.WORLD);
+                startGamePacket.setGeneratorType(GeneratorType.INFINITE);
+                startGamePacket.setDifficulty(Difficulty.NORMAL);
+                startGamePacket.setAchievementsDisabled(false);
+                startGamePacket.setDayCycleStopTime(-1);
+                startGamePacket.setEducationEditionOffer(0);
+                startGamePacket.setEducationEditionFeaturesEnabled(false);
+                startGamePacket.setEducationEditionProductId("");
+                startGamePacket.setRainTime(0); // TODO
+                startGamePacket.setThunderTime(0); // TODO
+                startGamePacket.setConfirmedPlatformLockedContent(false);
+                startGamePacket.setMultiplayerGame(true);
+                startGamePacket.setBroadcastToLAN(true);
+                startGamePacket.setXblBroadcastIntent(GamePublishSetting.PUBLIC);
+                startGamePacket.setPlatformBroadcastIntent(GamePublishSetting.PUBLIC);
+                startGamePacket.setCommandsEnabled(true);
+                startGamePacket.setTexturePacksRequired(false);
+                startGamePacket.setGameRules(GameRuleRegistry.getGameRules());
+                startGamePacket.setExperimentAmount(0);
+                startGamePacket.setExperimentsPreviouslyToggled(false);
+                startGamePacket.setBonusChest(false);
+                startGamePacket.setStartWithMapEnabled(false);
+                startGamePacket.setPermissionLevel(1);
+                startGamePacket.setServerChunkTickRange(4);
+                startGamePacket.setLockedBehaviourPack(false);
+                startGamePacket.setLockedResourcePack(false);
+                startGamePacket.setFromLockedWorldTemplate(false);
+                startGamePacket.setUsingMsaGamerTagsOnly(false);
+                startGamePacket.setFromWorldTemplate(false);
+                startGamePacket.setWorldTemplateOptionLocked(false);
+                startGamePacket.setOnlySpawningV1Villagers(false);
+                startGamePacket.setLimitedWorldWidth(16);
+                startGamePacket.setLimitedWorldHeight(16);
+                startGamePacket.setNetherType(false);
+                startGamePacket.setExperimentalGameplay(false);
+                startGamePacket.setWorldId("");
+                startGamePacket.setWorldName("world"); // TODO
+                startGamePacket.setPremiumWorldTemplateId("");
+                startGamePacket.setTrail(false);
+                startGamePacket.setMovementServerAuthoritative(false);
+                startGamePacket.setRewindHistorySize(0);
+                startGamePacket.setServerAuthoritativeBlockBreaking(false);
+                startGamePacket.setCurrentTick(0);
+                startGamePacket.setEnchantmentSeed(0);
+                startGamePacket.setCustomBlocksAmount(0);
+                startGamePacket.setItemPalette(BedrockResourceDataReader
+                        .retrieveItemPaletteByProtocolVersion(player.getLoginChainData().getProtocolVersion()));
+                startGamePacket.setMultiplayerCorrelationId("");
+                startGamePacket.setInventoryServerAuthoritative(false);
+                startGamePacket.setServerEngine("Terracotta");
+
+                player.getPlayerNetworkConnection().sendPacket(startGamePacket);
+
+                final AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket =
+                        new AvailableEntityIdentifiersPacket();
+                availableEntityIdentifiersPacket.setEntityIdentifiersData(BedrockResourceDataReader
+                        .retrieveEntityIdentifiersDataByProtocolVersion(player.getLoginChainData().getProtocolVersion()));
+
+                player.getPlayerNetworkConnection().sendPacket(availableEntityIdentifiersPacket);
+
+                final BiomeDefinitionListPacket biomeDefinitionListPacket = new BiomeDefinitionListPacket();
+                biomeDefinitionListPacket.setBiomeDefintionListData(BedrockResourceDataReader
+                        .retrieveBiomeDefinitionsDataByProtocolVersion(player.getLoginChainData().getProtocolVersion()));
+
+                player.getPlayerNetworkConnection().sendPacket(biomeDefinitionListPacket);
+                player.getPlayerNetworkConnection().sendPacket(new CreativeContentPacket());
+                player.initialize();
                 break;
         }
     }
@@ -62,7 +150,7 @@ public class ResourcePackClientResponsePacketHandler implements IPacketHandler<R
      */
     private void sendResourcePackStack(final Player player) {
         final ResourcePackStackPacket resourcePackStackPacket = new ResourcePackStackPacket();
-        resourcePackStackPacket.setMustAccept(Server.getInstance().getServerConfigurationData().isForceResourcePacks());
+        resourcePackStackPacket.setMustAccept(player.getServer().getServerConfigurationData().isForceResourcePacks());
 
         player.getPlayerNetworkConnection().sendPacket(resourcePackStackPacket);
     }

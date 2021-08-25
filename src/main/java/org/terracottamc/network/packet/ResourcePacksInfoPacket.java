@@ -33,7 +33,11 @@ public class ResourcePacksInfoPacket extends Packet {
 
         this.writeBoolean(this.forceAccept);
         this.writeBoolean(this.scripting);
-        this.writeBoolean(this.forceServerPacks);
+
+        if (this.protocolVersion >= Protocol.PROTOCOL_v1_17_10) {
+            this.writeBoolean(this.forceServerPacks);
+        }
+
         this.writeShortLE(0); // behaviour packs amount
 
         final Collection<ResourcePack> resourcePacks = Server.getInstance().getResourcePackManager()

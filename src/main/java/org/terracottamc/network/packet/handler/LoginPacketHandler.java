@@ -6,7 +6,6 @@ import org.terracottamc.entity.player.Player;
 import org.terracottamc.entity.player.PlayerNetworkConnection;
 import org.terracottamc.entity.player.info.DeviceInfo;
 import org.terracottamc.network.packet.LoginPacket;
-import org.terracottamc.network.packet.PlayStatusPacket;
 import org.terracottamc.network.packet.Protocol;
 import org.terracottamc.network.packet.ResourcePacksInfoPacket;
 import org.terracottamc.network.packet.type.PlayStatus;
@@ -47,15 +46,23 @@ public class LoginPacketHandler implements IPacketHandler<LoginPacket> {
         final UUID uuid = packet.getUuid();
         final String languageCode = packet.getLanguageCode();
         final String gameVersion = packet.getGameVersion();
+        final String platformOfflineId = packet.getPlatformOfflineId();
+        final String platformOnlineId = packet.getPlatformOnlineId();
+        final String selfSignedId = packet.getSelfSignedId();
+        final String serverAddress = packet.getServerAddress();
+        final String thirdPartyName = packet.getThirdPartyName();
+        final boolean thirdPartyNameOnly = packet.isThirdPartyNameOnly();
         final DeviceInfo deviceInfo = packet.getDeviceInfo();
 
         final LoginChainData loginChainData = new LoginChainData(protocolVersion, username, xboxId, uuid, languageCode,
-                gameVersion, deviceInfo);
+                gameVersion, platformOfflineId, platformOnlineId, selfSignedId, serverAddress, thirdPartyName,
+                thirdPartyNameOnly, deviceInfo);
         final Player player = new Player(new PlayerNetworkConnection(server, rakNetSession), loginChainData);
         player.setUuid(uuid);
         player.setSkin(packet.getSkin());
-
-        final PlayStatusPacket playStatusPacket = new PlayStatusPacket();
+        player.setNameTag(username);
+        player.setNameTagVisible(true);
+        player.setNameTagAlwaysVisible(true);
 
         PlayStatus playStatus = PlayStatus.LOGIN_SUCCESS;
 
@@ -73,25 +80,14 @@ public class LoginPacketHandler implements IPacketHandler<LoginPacket> {
             playStatus = PlayStatus.LOGIN_FAILED_SERVER_FULL;
         }
 
-        playStatusPacket.setPlayStatus(playStatus);
-
-        player.getPlayerNetworkConnection().sendPacket(playStatusPacket);
+        player.sendPlayStatus(playStatus);
 
         if (!playStatus.equals(PlayStatus.LOGIN_SUCCESS)) {
             return;
         }
 
-        server.getPlayers().add(player);
+        server.addPlayer(player);
 
-        this.sendResourcePacksInfo(player);
-    }
-
-    /**
-     * Sends the resource packs information to the given {@link org.terracottamc.entity.player.Player}
-     *
-     * @param player who should receive the resource pack information
-     */
-    private void sendResourcePacksInfo(final Player player) {
         final ResourcePacksInfoPacket resourcePacksInfoPacket = new ResourcePacksInfoPacket();
         resourcePacksInfoPacket.setForceAccept(Server.getInstance().getServerConfigurationData().isForceResourcePacks());
         resourcePacksInfoPacket.setScripting(false);

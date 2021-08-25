@@ -20,6 +20,7 @@ public class ServerConfigurationData {
     private String submotd;
     private String defaultGameMode;
     private boolean forceResourcePacks;
+    private int viewDistance;
 
     /**
      * Retrieves the servers address
@@ -86,6 +87,15 @@ public class ServerConfigurationData {
     }
 
     /**
+     * Retrieves the view distance in chunks of this {@link org.terracottamc.server.Server}
+     *
+     * @return a fresh view distance
+     */
+    public int getViewDistance() {
+        return this.viewDistance;
+    }
+
+    /**
      * Updates the address of the server
      *
      * @param address which should be updated
@@ -146,5 +156,14 @@ public class ServerConfigurationData {
      */
     public void setForceResourcePacks(final boolean forceResourcePacks) {
         this.forceResourcePacks = forceResourcePacks;
+    }
+
+    /**
+     * Updates the view distance of the {@link org.terracottamc.server.Server}
+     *
+     * @param viewDistance which represents the updated value
+     */
+    public void setViewDistance(final int viewDistance) {
+        this.viewDistance = viewDistance;
     }
 }

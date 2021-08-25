@@ -26,7 +26,7 @@ Currently, we don't have any forums for now.
 ## Quick Links Only Discord Server Available
 
 * __[Discord](https://discord.gg/PfnCznyGSR)__
-* __[Homepage](N/A)__
+* __[Homepage](https://github.com/TerracottaMC/Terracotta)__
 * __[Forums](N/A)__
 * __[Documentation](N/A)__
 * __[Jenkins](N/A)__

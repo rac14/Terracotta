@@ -3,7 +3,7 @@
 
 
 <div align="center">
-    <a href="https://discord.gg/PfnCznyGSR"><img src="https://img.shields.io/discord/821124503185653803?style=flat-square"/></a>
+    <a href="https://discord.gg/PfnCznyGSR"><img src="https://img.shields.io/discord/871293480343834625?style=flat-square"/></a>
     <a href="add website here if you made"><img src="https://img.shields.io/badge/website-online-orange?style=flat-square"/></a>
 </div>
 <hr/>

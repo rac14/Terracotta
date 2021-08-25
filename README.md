@@ -29,7 +29,6 @@ Currently, we don't have any forums for now.
 * __[Homepage](N/A)__
 * __[Forums](N/A)__
 * __[Documentation](N/A)__
-* __[Plugin Repository](N/A)__
 * __[Jenkins](N/A)__
 
 #### FAQ

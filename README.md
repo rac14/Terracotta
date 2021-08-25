@@ -21,7 +21,7 @@ currently in heavy indev
 Discord: `https://discord.gg/PfnCznyGSR`
 
 
-#FAQ
+# FAQ
 
 
 - Can i use this in my Server

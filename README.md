@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="256" style="border-radius:10px;" height="256" src="https://media.discordapp.net/attachments/804736694246047744/880116516513792000/1629906296320.jpg">
+  <img width="256" style="border-radius:10px;" height="256" src="https://media.discordapp.net/attachments/871294402469978112/880118670590902302/Terracotta.png">
 
 
 <div align="center">
